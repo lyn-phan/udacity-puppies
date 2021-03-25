@@ -3,7 +3,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Puppy
 
-
 engine = create_engine('sqlite:///puppies.db')
 Base.metadata.bind = engine
 
@@ -12,12 +11,12 @@ session = DBSession()
 
 app = Flask(__name__) 
 
-# Create the appropriate app.route functions, 
-#test and see if they work
-
 
 #Make an app.route() decorator here
 @app.route("/")
+def homepage():
+    return "Welcome!"
+
 @app.route("/puppies", methods = ['GET', 'POST'])
 def puppiesFunction():
   if request.method == 'GET':
@@ -25,15 +24,14 @@ def puppiesFunction():
     return getAllPuppies()
   elif request.method == 'POST':
     #Call the method to make a new puppy
-    print "Making a New puppy"
+    print("Making a New puppy")
     
     name = request.args.get('name', '')
     description = request.args.get('description', '')
-    print name
-    print description
+    print(name)
+    print(description)
     return makeANewPuppy(name, description)
- 
-  
+
  
 #Make another app.route() decorator here that takes in an integer id in the URI
 @app.route("/puppies/<int:id>", methods = ['GET', 'PUT', 'DELETE'])
@@ -46,7 +44,7 @@ def puppiesFunctionId(id):
   elif request.method == 'PUT':
     name = request.args.get('name', '')
     description = request.args.get('description', '')
-    return updatePuppy(id,name, description)
+    return updatePuppy(id, name, description)
     
  #Call the method to remove a puppy 
   elif request.method == 'DELETE':
@@ -74,13 +72,13 @@ def updatePuppy(id,name, description):
     puppy.description = description
   session.add(puppy)
   session.commit()
-  return "Updated a Puppy with id %s" % id
+  return f"Updated a Puppy with {id}" 
 
 def deletePuppy(id):
   puppy = session.query(Puppy).filter_by(id = id).one()
   session.delete(puppy)
   session.commit()
-  return "Removed Puppy with id %s" % id
+  return f"Removed Puppy with {id}" 
 
 
 if __name__ == '__main__':
